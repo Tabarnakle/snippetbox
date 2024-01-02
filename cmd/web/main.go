@@ -8,11 +8,13 @@ import (
 	"os"
 
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/tabarnakle/snippetbox/pkg/models/mysql"
 )
 
 type application struct {
 	errorLog *log.Logger
 	infoLog  *log.Logger
+	snippets *mysql.SnippetModel
 }
 
 func main() {
@@ -25,16 +27,18 @@ func main() {
 	infoLog := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
 	errorLog := log.New(os.Stderr, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
 
+	// DB stuff
 	db, err := openDB(*dsn)
 	if err != nil {
 		errorLog.Fatal(err)
 	}
-	defer db.Close()
+	defer db.Close() // defer is cool, executes the function before the outer func ends
 
-	// create app instance to inject loggers (dependencies) into the handler functions
+	// app dependencies made available to handlers and other stuff I guess
 	app := &application{
 		errorLog: errorLog,
 		infoLog:  infoLog,
+		snippets: &mysql.SnippetModel{DB: db},
 	}
 
 	// customize http server to add errorLog
