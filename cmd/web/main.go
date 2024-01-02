@@ -6,6 +6,8 @@ import (
 	"log"
 	"net/http"
 	"os"
+
+	_ "github.com/go-sql-driver/mysql"
 )
 
 type application struct {
@@ -27,7 +29,6 @@ func main() {
 	if err != nil {
 		errorLog.Fatal(err)
 	}
-
 	defer db.Close()
 
 	// create app instance to inject loggers (dependencies) into the handler functions
