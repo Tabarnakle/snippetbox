@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	"text/template"
 
 	"github.com/tabarnakle/snippetbox/pkg/models"
 )
@@ -57,7 +58,21 @@ func (app *application) showSnippet(w http.ResponseWriter, r *http.Request) {
 		}
 		return
 	}
-	fmt.Fprintf(w, "%v", s)
+	files := []string{
+		"./ui/html/show.page.tmpl",
+		"./ui/html/base.layout.tmpl",
+		"./ui/html/footer.partial.tmpl",
+	}
+	ts, err := template.ParseFiles(files...)
+	if err != nil {
+		app.serverError(w, err)
+		return
+	}
+	// execute receives a models.Snippet struct as data
+	err = ts.Execute(w, s)
+	if err != nil {
+		app.serverError(w, err)
+	}
 }
 
 func (app *application) createSnippet(w http.ResponseWriter, r *http.Request) {
