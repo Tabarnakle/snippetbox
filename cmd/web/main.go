@@ -36,7 +36,7 @@ func main() {
 	}
 	defer db.Close() // defer is cool, executes the function before the outer func ends
 
-	templateCache, err := newTemplateCache("./ui/html")
+	templateCache, err := newTemplateCache("./ui/html/")
 	if err != nil {
 		errorLog.Fatal(err)
 	}
